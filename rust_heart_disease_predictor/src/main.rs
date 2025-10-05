@@ -7,6 +7,8 @@ use models::{
     Model,
     logistic_regression::LogisticRegression,
     naive_bayes::GaussianNB,
+    knn::KNN,
+    decision_tree::DecisionTree,
 };
 use ensemble::VotingClassifier;
 use evaluation::{calculate_metrics, print_comparison_table, print_confusion_matrix, print_metrics_bar_chart, Metrics};
@@ -27,15 +29,25 @@ fn main() {
     // Split data
     let (train_set, test_set) = preprocessing::train_test_split(&mut records, 0.2);
 
-    // Create models
+    // Create individual models
     let lr = LogisticRegression::new(0.01, 1000);
     let gnb = GaussianNB::new();
+    let knn = KNN::new(5);
+    let dt = DecisionTree::new(10, 2);
 
-    let ensemble = VotingClassifier::new(vec![Box::new(lr), Box::new(gnb)]);
+    // Create ensemble with all four models
+    let ensemble = VotingClassifier::new(vec![
+        Box::new(LogisticRegression::new(0.01, 1000)),
+        Box::new(GaussianNB::new()),
+        Box::new(KNN::new(5)),
+        Box::new(DecisionTree::new(10, 2)),
+    ]);
 
     let mut models: Vec<(&str, Box<dyn Model>)> = vec![
         ("Logistic Regression", Box::new(LogisticRegression::new(0.01, 1000))),
         ("Gaussian Naive Bayes", Box::new(GaussianNB::new())),
+        ("KNN", Box::new(KNN::new(5))),
+        ("Decision Tree", Box::new(DecisionTree::new(10, 2))),
         ("Voting Classifier", Box::new(ensemble)),
     ];
 
