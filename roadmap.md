@@ -104,3 +104,21 @@
         *   Recall
         *   F1-Score
     *   Print a comparison table to the console showing how each model and the final ensemble performed on the test data.
+
+---
+
+### **Phase 5: Visualization**
+
+1.  **Individual Model Performance:**
+    *   Generate bar charts to compare the key performance metrics (Accuracy, Precision, Recall, F1-Score) across the four individual models.
+    *   For Logistic Regression, plot the decision boundary if possible (may require dimensionality reduction to 2D).
+    *   For KNN, create a scatter plot of the data (using 2D PCA) and highlight the neighbors for a few example test points.
+    *   For the Decision Tree, implement a text-based or graphical representation of the final tree structure.
+
+2.  **Ensemble Model Performance:**
+    *   Add the `VotingClassifier`'s performance to the comparison bar charts.
+    *   Create a confusion matrix visualization for the ensemble model to show True Positives, True Negatives, False Positives, and False Negatives.
+
+3.  **Data Visualization:**
+    *   Generate histograms for each of the 13 features to understand their distributions.
+    *   Create a correlation matrix heatmap to visualize the relationships between different features.
