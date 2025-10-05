@@ -1,1 +1,2 @@
-data/*
+/rust_heart_disease_predictor/target
+/rust_heart_disease_predictor/data
