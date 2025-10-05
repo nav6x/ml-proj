@@ -2,6 +2,7 @@ mod preprocessing;
 mod models;
 mod ensemble;
 mod evaluation;
+mod visualization;
 
 use models::{
     Model,
@@ -64,7 +65,35 @@ fn main() {
     print_comparison_table(&results);
     print_metrics_bar_chart(&results);
 
-    for (name, matrix) in confusion_matrices {
-        print_confusion_matrix(name, matrix);
+    for (name, matrix) in &confusion_matrices {
+        print_confusion_matrix(name, *matrix);
     }
+
+    // Generate visualizations
+    println!("Generating visualizations...");
+    
+    // Create performance comparison chart
+    if let Err(e) = visualization::create_performance_comparison_chart(&results, "performance_comparison.png") {
+        eprintln!("Error creating performance comparison chart: {}", e);
+    }
+
+    // Create confusion matrix visualizations
+    for (name, confusion_matrix) in &confusion_matrices {
+        let filename = format!("confusion_matrix_{}.png", name.replace(" ", "_").to_lowercase());
+        if let Err(e) = visualization::create_confusion_matrix_heatmap(name, *confusion_matrix, &filename) {
+            eprintln!("Error creating confusion matrix heatmap for {}: {}", name, e);
+        }
+    }
+
+    // Create feature distribution histogram
+    if let Err(e) = visualization::create_feature_histograms(&train_set, "feature_histogram.png") {
+        eprintln!("Error creating feature histogram: {}", e);
+    }
+
+    // Create correlation matrix heatmap
+    if let Err(e) = visualization::create_correlation_matrix_heatmap(&train_set, "correlation_matrix.png") {
+        eprintln!("Error creating correlation matrix: {}", e);
+    }
+
+    println!("Visualizations generated successfully!");
 }
