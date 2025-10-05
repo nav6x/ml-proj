@@ -50,34 +50,3 @@ pub fn print_comparison_table(results: &[(&str, Metrics)]) {
     println!("|---------------------------|----------|-----------|----------|----------|");
 }
 
-pub fn print_confusion_matrix(name: &str, confusion_matrix: (u32, u32, u32, u32)) {
-    let (tp, tn, fp, fn_) = confusion_matrix;
-    println!("\nConfusion Matrix for: {}", name);
-    println!("-------------------------");
-    println!("|          | Predicted |");
-    println!("|          | Neg | Pos |");
-    println!("|----------|-----|-----|");
-    println!("| Actual N | {:<3} | {:<3} |", tn, fp);
-    println!("| Actual P | {:<3} | {:<3} |", fn_, tp);
-    println!("-------------------------");
-}
-
-pub fn print_metrics_bar_chart(results: &[(&str, Metrics)]) {
-    println!("\nPerformance Metrics Bar Chart:");
-    let metrics = ["Accuracy", "Precision", "Recall", "F1-Score"];
-    for metric_name in metrics.iter() {
-        println!("\n{}:", metric_name);
-        for (name, metrics_values) in results {
-            let value = match *metric_name {
-                "Accuracy" => metrics_values.accuracy,
-                "Precision" => metrics_values.precision,
-                "Recall" => metrics_values.recall,
-                "F1-Score" => metrics_values.f1_score,
-                _ => 0.0,
-            };
-            let bar = "█".repeat((value * 50.0) as usize);
-            println!("{:<25} |{:<50}| {:.4}", name, bar, value);
-        }
-    }
-}
-

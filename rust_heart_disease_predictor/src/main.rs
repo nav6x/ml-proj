@@ -12,7 +12,8 @@ use models::{
     decision_tree::DecisionTree,
 };
 use ensemble::VotingClassifier;
-use evaluation::{calculate_metrics, print_comparison_table, print_confusion_matrix, print_metrics_bar_chart, Metrics};
+use evaluation::{calculate_metrics, print_comparison_table};
+use visualization::{save_performance_chart, save_confusion_matrix};
 
 fn main() {
     println!("Rust Heart Disease Predictor");
@@ -63,7 +64,10 @@ fn main() {
     }
 
     print_comparison_table(&results);
-    print_metrics_bar_chart(&results);
+
+    if let Err(e) = save_performance_chart(&results) {
+        eprintln!("Error saving performance chart: {}", e);
+    }
 
     for (name, matrix) in &confusion_matrices {
         print_confusion_matrix(name, *matrix);
@@ -96,4 +100,10 @@ fn main() {
     }
 
     println!("Visualizations generated successfully!");
+}
+    for (name, matrix) in confusion_matrices {
+        if let Err(e) = save_confusion_matrix(name, matrix) {
+            eprintln!("Error saving confusion matrix for {}: {}", name, e);
+        }
+    }
 }
