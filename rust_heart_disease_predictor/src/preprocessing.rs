@@ -90,3 +90,48 @@ pub fn train_test_split(
     let train_set = data.drain(..).collect();
     (train_set, test_set)
 }
+
+pub fn standardize_features(
+    data: &mut [ProcessedPatientRecord],
+) -> (Vec<f32>, Vec<f32>) {
+    if data.is_empty() {
+        return (Vec::new(), Vec::new());
+    }
+
+    let num_features = data[0].features.len();
+    let mut means = vec![0.0; num_features];
+    let mut std_devs = vec![0.0; num_features];
+
+    // Calculate means
+    for record in data.iter() {
+        for (i, &feature) in record.features.iter().enumerate() {
+            means[i] += feature;
+        }
+    }
+    for mean in means.iter_mut() {
+        *mean /= data.len() as f32;
+    }
+
+    // Calculate standard deviations
+    for record in data.iter() {
+        for (i, &feature) in record.features.iter().enumerate() {
+            std_devs[i] += (feature - means[i]).powi(2);
+        }
+    }
+    for std_dev in std_devs.iter_mut() {
+        *std_dev = (*std_dev / data.len() as f32).sqrt();
+    }
+
+    // Apply standardization
+    for record in data.iter_mut() {
+        for (i, feature) in record.features.iter_mut().enumerate() {
+            if std_devs[i] > 0.0 {
+                *feature = (*feature - means[i]) / std_devs[i];
+            } else {
+                *feature = 0.0; // Handle zero standard deviation (constant feature)
+            }
+        }
+    }
+
+    (means, std_devs)
+}

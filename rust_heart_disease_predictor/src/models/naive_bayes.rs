@@ -51,7 +51,7 @@ impl super::Model for GaussianNB {
 
     fn predict(&self, record: &ProcessedPatientRecord) -> u8 {
         let mut best_class = 0;
-        let mut max_posterior = -1.0;
+        let mut max_posterior = f32::NEG_INFINITY;
 
         for (class_value, class_stats) in self.stats.iter() {
             let mut posterior = class_stats.prior.ln();
@@ -61,9 +61,9 @@ impl super::Model for GaussianNB {
                     class_stats.mean[i],
                     class_stats.variance[i],
                 );
-                if likelihood > 0.0 {
-                    posterior += likelihood.ln();
-                }
+                // Add a small epsilon to avoid log(0)
+                let log_likelihood = (likelihood + 1e-10).ln();
+                posterior += log_likelihood;
             }
 
             if posterior > max_posterior {

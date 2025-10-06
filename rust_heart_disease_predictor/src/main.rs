@@ -13,7 +13,7 @@ use models::{
 };
 use ensemble::VotingClassifier;
 use evaluation::{calculate_metrics, print_comparison_table};
-use visualization::{save_performance_chart, save_confusion_matrix};
+use visualization::save_performance_chart;
 
 fn main() {
     println!("Rust Heart Disease Predictor");
@@ -30,12 +30,6 @@ fn main() {
 
     // Split data
     let (train_set, test_set) = preprocessing::train_test_split(&mut records, 0.2);
-
-    // Create individual models
-    let lr = LogisticRegression::new(0.01, 1000);
-    let gnb = GaussianNB::new();
-    let knn = KNN::new(5);
-    let dt = DecisionTree::new(10, 2);
 
     // Create ensemble with all four models
     let ensemble = VotingClassifier::new(vec![
@@ -69,10 +63,6 @@ fn main() {
         eprintln!("Error saving performance chart: {}", e);
     }
 
-    for (name, matrix) in &confusion_matrices {
-        print_confusion_matrix(name, *matrix);
-    }
-
     // Generate visualizations
     println!("Generating visualizations...");
     
@@ -100,10 +90,4 @@ fn main() {
     }
 
     println!("Visualizations generated successfully!");
-}
-    for (name, matrix) in confusion_matrices {
-        if let Err(e) = save_confusion_matrix(name, matrix) {
-            eprintln!("Error saving confusion matrix for {}: {}", name, e);
-        }
-    }
 }

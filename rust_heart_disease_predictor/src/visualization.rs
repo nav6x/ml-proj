@@ -1,7 +1,6 @@
 use plotters::prelude::*;
 use crate::evaluation::Metrics;
 use crate::preprocessing::ProcessedPatientRecord;
-use std::collections::HashMap;
 
 pub fn create_performance_comparison_chart(results: &[(&str, Metrics)], output_path: &str) -> Result<(), Box<dyn std::error::Error>> {
     let root = BitMapBackend::new(output_path, (1000, 600)).into_drawing_area();
@@ -60,8 +59,10 @@ pub fn create_performance_comparison_chart(results: &[(&str, Metrics)], output_p
             ("sans-serif", 10).into_font(),
         )))?;
     }
-use crate::evaluation::Metrics;
-use plotters::prelude::*;
+
+    root.present()?;
+    Ok(())
+}
 
 pub fn save_performance_chart(results: &[(&str, Metrics)]) -> Result<(), Box<dyn std::error::Error>> {
     let root = BitMapBackend::new("performance_chart.png", (1024, 768)).into_drawing_area();
@@ -87,7 +88,13 @@ pub fn save_performance_chart(results: &[(&str, Metrics)]) -> Result<(), Box<dyn
         .axis_style(&BLACK.mix(0.1)) // Subtle Y-axis grid lines
         .draw()?;
 
-    let colors = [BLUE.mix(0.8), GREEN.mix(0.8), MAGENTA.mix(0.8)];
+    let colors = [
+        BLUE.mix(0.8), 
+        GREEN.mix(0.8), 
+        MAGENTA.mix(0.8),
+        RED.mix(0.8),
+        CYAN.mix(0.8),
+    ];
     results.iter().enumerate().for_each(|(i, (name, metrics))| {
         let data = [
             metrics.accuracy,
