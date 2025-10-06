@@ -41,18 +41,6 @@ impl DecisionTree {
         }
     }
 
-    pub fn train(&mut self, training_data: &[ProcessedPatientRecord]) {
-        if !training_data.is_empty() {
-            self.root = Some(self.build_tree(training_data, 0));
-        }
-    }
-
-    pub fn predict(&self, record: &ProcessedPatientRecord) -> u8 {
-        match &self.root {
-            Some(node) => self.predict_from_node(node, &record.features),
-            None => 0, // Default prediction if tree wasn't built
-        }
-    }
 
     fn build_tree(&self, data: &[ProcessedPatientRecord], depth: usize) -> Node {
         // Check stopping conditions

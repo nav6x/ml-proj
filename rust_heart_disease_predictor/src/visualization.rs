@@ -289,22 +289,7 @@ pub fn create_feature_histograms(data: &[ProcessedPatientRecord], output_path: &
     Ok(())
 }
 
-// Function to create a simple text representation of the decision tree
-pub fn print_decision_tree_structure(name: &str, output_path: &str) -> Result<(), Box<dyn std::error::Error>> {
-    use std::fs::File;
-    use std::io::Write;
 
-    let mut file = File::create(output_path)?;
-    writeln!(file, "Decision Tree Structure for: {}", name)?;
-    writeln!(file, "This is a placeholder for an actual tree visualization.")?;
-    writeln!(file, "The tree would show:")?;
-    writeln!(file, " - Root node with first split condition")?;
-    writeln!(file, " - Internal nodes with subsequent split conditions")?;
-    writeln!(file, " - Leaf nodes with class predictions")?;
-    writeln!(file, " - Feature names and threshold values at each split")?;
-    
-    Ok(())
-}
 
 // Function to create correlation matrix heatmap
 pub fn create_correlation_matrix_heatmap(data: &[ProcessedPatientRecord], output_path: &str) -> Result<(), Box<dyn std::error::Error>> {
@@ -413,69 +398,6 @@ pub fn create_correlation_matrix_heatmap(data: &[ProcessedPatientRecord], output
             ("sans-serif", 10).into_font(),
         )))?;
     }
-
-    Ok(())
-}
-pub fn save_confusion_matrix(
-    name: &str,
-    confusion_matrix: (u32, u32, u32, u32),
-) -> Result<(), Box<dyn std::error::Error>> {
-    let (tp, tn, fp, fn_) = confusion_matrix;
-    let file_name = format!("confusion_matrix_{}.png", name.to_lowercase().replace(" ", "_"));
-    let root = BitMapBackend::new(&file_name, (600, 600)).into_drawing_area();
-    root.fill(&WHITE)?;
-
-    let mut chart = ChartBuilder::on(&root)
-        .caption(format!("Confusion Matrix: {}", name), ("sans-serif", 30.0).into_font())
-        .x_label_area_size(50) // Increased space for x-axis label
-        .y_label_area_size(50) // Increased space for y-axis label
-        .margin(10)
-        .build_cartesian_2d(0..2, 0..2)?;
-
-    chart.configure_mesh()
-        .disable_mesh()
-        .x_desc("Predicted") // X-axis label
-        .y_desc("Actual") // Y-axis label
-        .x_label_style(("sans-serif", 20.0).into_font())
-        .y_label_style(("sans-serif", 20.0).into_font())
-        .draw()?;
-
-    let max_val = *[tp, tn, fp, fn_].iter().max().unwrap_or(&1) as f32;
-
-    let cells = [
-        (0, 1, tn, "True Negative"), 
-        (1, 1, fp, "False Positive"), 
-        (0, 0, fn_, "False Negative"), 
-        (1, 0, tp, "True Positive")
-    ];
-
-    for (x, y, val, label) in cells.iter() {
-        // Use a gradient from white to blue based on the value
-        let color_intensity = *val as f32 / max_val;
-        let cell_color = BLUE.mix(color_intensity as f64);
-
-        // Draw the filled cell rectangle
-        chart.draw_series(std::iter::once(
-            Rectangle::new([(*x, *y), (*x + 1, *y + 1)], cell_color.filled())
-        ))?;
-
-        // Draw the border rectangle
-        chart.draw_series(std::iter::once(
-            Rectangle::new([(*x, *y), (*x + 1, *y + 1)], ShapeStyle::from(&BLACK).stroke_width(2))
-        ))?;
-
-        // Draw the value text in the center of the cell
-        chart.draw_series(std::iter::once(
-            Text::new(
-                format!("{}\n{}", label, val),
-                ((*x as f64 + 0.5) as i32, (*y as f64 + 0.5) as i32), // Center of the cell, cast to i32
-                ("sans-serif", 25.0).into_font().color(&BLACK)
-            )
-        ))?;
-    }
-
-    root.present()?;
-    println!("Saved confusion matrix to {}", file_name);
 
     Ok(())
 }
